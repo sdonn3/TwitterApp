@@ -59,6 +59,8 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 Describe any challenges encountered while building the app.
 
+I had issues getting OAuth working for a period of time. Also the RxBindings on the EditText was giving me issue for a bit
+
 ## Open-source libraries used
 
 - [Retrofit]
