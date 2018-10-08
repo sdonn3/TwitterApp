@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">TwitterApp</string>
+    <string name="log_into_twitter">Log into Twitter</string>
+    <string name="logging_you_in">Logging you in</string>
+    <string name="at_user">\@%1$s</string>
+    <string name="tweet">TWEET</string>
+    <string name="starting_number">140</string>
+    <string name="compose_hint">What\'s Happening?</string>
+</resources>
