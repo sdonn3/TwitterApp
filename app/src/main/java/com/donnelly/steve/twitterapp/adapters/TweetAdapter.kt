@@ -8,14 +8,18 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.donnelly.steve.twitterapp.R
 import com.donnelly.steve.twitterapp.glide.GlideApp
+import com.jakewharton.rxbinding2.view.clicks
 import com.twitter.sdk.android.core.models.Tweet
+import com.twitter.sdk.android.core.models.User
 import kotlinx.android.synthetic.main.item_tweet.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
 
     var tweets : ArrayList<Tweet> = ArrayList()
+    var listener: UserClickedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder =
             TweetViewHolder(
@@ -34,15 +38,14 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
     }
 
     inner class TweetViewHolder(tweetView: View) : RecyclerView.ViewHolder(tweetView) {
-        private val todayDate : Date = Calendar.getInstance().time
+        private val todayDate: Date = Calendar.getInstance().time
         private val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZ yyyy", Locale.getDefault())
 
         fun bind(tweet: Tweet, position: Int) {
             itemView.apply {
                 if (position % 2 == 1) {
                     setBackgroundColor(ContextCompat.getColor(context, R.color.backgroundAlternate))
-                }
-                else {
+                } else {
                     setBackgroundColor(ContextCompat.getColor(context, android.R.color.white))
                 }
                 GlideApp
@@ -54,10 +57,17 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
                 tvUser.text = context.getString(R.string.at_user, tweet.user.screenName)
                 tvBody.text = tweet.text
                 tvTime.text = dateStringToTime(tweet.createdAt)
+
+                ivTweet
+                        .clicks()
+                        .throttleFirst(500L, TimeUnit.MILLISECONDS)
+                        .subscribe{
+                            listener?.userClicked(tweet.user)
+                        }
             }
         }
 
-        private fun dateStringToTime(date: String) : String {
+        private fun dateStringToTime(date: String): String {
             val incomingDate = dateFormat.parse(date)
             val difference = todayDate.time - incomingDate.time
             val years = difference / DateUtils.YEAR_IN_MILLIS
@@ -84,5 +94,7 @@ class TweetAdapter : RecyclerView.Adapter<TweetAdapter.TweetViewHolder>() {
             return ""
         }
     }
-
+    interface UserClickedListener {
+        fun userClicked(user: User)
+    }
 }

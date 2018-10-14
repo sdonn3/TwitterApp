@@ -1,6 +1,5 @@
 package com.donnelly.steve.twitterapp
 
-import android.app.Activity
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Spannable
@@ -9,6 +8,8 @@ import android.text.style.ForegroundColorSpan
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.donnelly.steve.twitterapp.extensions.hide
+import com.donnelly.steve.twitterapp.extensions.show
 import com.donnelly.steve.twitterapp.glide.GlideApp
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -50,12 +51,14 @@ class ComposeActivity : AppCompatActivity() {
                     it.printStackTrace()
                 })
 
+        pbLoading.show()
         TwitterCore.getInstance().apiClient.accountService.verifyCredentials(
                 true,
                 false,
                 true
         ).enqueue(object : Callback<User>() {
             override fun success(result: Result<User>?) {
+                pbLoading.hide()
                 val user = result?.data
                 user?.let {
                     tvName.text = it.name
@@ -69,6 +72,7 @@ class ComposeActivity : AppCompatActivity() {
             }
 
             override fun failure(exception: TwitterException?) {
+                pbLoading.hide()
                 Toast.makeText(this@ComposeActivity, exception.toString(), Toast.LENGTH_LONG).show()
                 exception?.printStackTrace()
             }
@@ -91,8 +95,6 @@ class ComposeActivity : AppCompatActivity() {
                                     null
                             ).enqueue(object : Callback<Tweet>() {
                                 override fun success(result: Result<Tweet>?) {
-                                    TimelineActivity.tweet = result?.data
-                                    setResult(Activity.RESULT_OK)
                                     finish()
                                 }
 
@@ -102,8 +104,6 @@ class ComposeActivity : AppCompatActivity() {
                                 }
                             })
                         }
-
-        val userId = TwitterCore.getInstance().sessionManager.activeSession.userId
     }
 
     override fun onDestroy() {

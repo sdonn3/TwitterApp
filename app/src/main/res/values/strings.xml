@@ -6,4 +6,5 @@
     <string name="tweet">TWEET</string>
     <string name="starting_number">140</string>
     <string name="compose_hint">What\'s Happening?</string>
+    <string name="profile">Profile</string>
 </resources>
